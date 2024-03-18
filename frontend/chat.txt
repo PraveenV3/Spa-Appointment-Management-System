@@ -1,0 +1,833 @@
+import React from 'react';
+import profileImage from '../images/profile.jpg';
+
+
+const Header = ({ isDarkMode }) => {
+    const headerStyle = {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        padding: '20px 30px', 
+        backgroundColor: isDarkMode ? '#242526' : '#FFF', 
+        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)', 
+        transition: 'background-color 0.3s ease',
+        fontFamily: "'Poppins', sans-serif", 
+    };
+
+    const userActionsStyle = {
+        display: 'flex',
+        alignItems: 'center',
+    };
+
+    const userAccountStyle = {
+        display: 'flex',
+        alignItems: 'center',
+        marginLeft: 'auto',
+    };
+
+    const usernameStyle = {
+        marginLeft: '8px',
+        color: isDarkMode ? '#E4E9F7' : '#695CFE', 
+        fontWeight: '500', 
+    };
+
+    const logoutStyle = {
+        cursor: 'pointer',
+        marginLeft: '20px',
+        color: isDarkMode ? '#E4E9F7' : '#695CFE',
+    };
+
+    const profileImageStyle = {
+        width: '30px', 
+        height: '30px', 
+        borderRadius: '50%', 
+        objectFit: 'cover', 
+    };
+
+    return (
+        <header style={headerStyle}>
+        
+            <div style={{ fontSize: '24px', color: isDarkMode ? '#FFF' : '#695CFE', fontWeight: '600' }}>
+              
+            </div>
+            <div style={userActionsStyle}>
+                <div style={userAccountStyle}>
+                
+                <img src={profileImage} alt="Profile" style={profileImageStyle} />
+                    <span style={usernameStyle}>Anna White</span>
+                </div>
+                <div style={logoutStyle}>
+           
+                </div>
+            </div>
+        </header>
+    );
+};
+
+export default Header;
+import React, { Component } from 'react';
+import logoImage from '../images/p.jpg';
+
+class Sidebar extends Component {
+    render() {
+        const { isSidebarOpen, toggleSidebar, isDarkMode, toggleDarkMode,
+         } = this.props;
+        return (
+            <nav className={`sidebar ${isSidebarOpen ? "" : "close"}`}>
+                <header>
+                    <div className="image-text">
+                        <span className="image">
+                        <img src={logoImage} alt="Profile" style={{ marginLeft: '-25%' }} />
+                           
+                        </span>
+                        <div className="text logo-text">
+                            <span className="name" style={{ marginLeft: '-10%' }}>P&D Auto Engineers</span>
+                            <span className="profession" style={{ marginLeft: '-44%' }}>Private Limited</span>
+                        </div>
+                    </div>
+                    <i className='fas fa-arrow-right toggle' style={{ fontSize: '90%' }} onClick={toggleSidebar}></i> 
+                </header>
+                <div className="menu-bar">
+                    <div className="menu">
+                        <ul className="menu-links">
+                          
+                            <li className="nav-link">
+                                <a href="#">
+                                    <i className='fas fa-car icon'></i> 
+                                    <span className="text nav-text">Supplies</span>
+                                </a>
+                                </li>
+
+                                <li className="nav-link">
+                                 <a href="#">
+                                     <i className='fas fa-users icon'></i> 
+                                     <span className="text nav-text">Employees</span>
+                              </a>
+                                </li>
+                                 <li className="nav-link">
+                                     <a href="#">
+                                         <i className='fas fa-shop icon'></i> 
+                                         <span className="text nav-text">Online Shop</span>
+                                    </a>
+                                </li>
+                                 <li className="nav-link">
+                                     <a href="#">
+                                         <i className='fas fa-exclamation-triangle icon'></i> 
+                                         <span className="text nav-text">Issues</span>
+                                    </a>
+                                </li>
+                                <li className="nav-link">
+                                    <a href="#">
+                                         <i className='fas fa-calendar icon'></i> 
+                                         <span className="text nav-text">Service & Appointment</span>
+                                     </a>
+                                 </li>
+                                 <li className="nav-link">
+                                     <a href="#">
+                                         <i className='fas fa-archive icon'></i> 
+                                         <span className="text nav-text">Inventories</span>
+                                     </a>
+                                 </li>
+                                 <li className="nav-link">
+                                     <a href="#">
+                                         <i className='fas fa-handshake icon'></i> 
+                                         <span className="text nav-text">Customers</span>
+                                     </a>
+                                 </li>
+                                 <li className="nav-link">
+                                     <a href="#">
+                                         <i className='fas fa-credit-card icon'></i> 
+                                        <span className="text nav-text">Payments</span>
+                                    </a>
+                                 </li>
+                            
+                        </ul>
+                    </div>
+                    <div className="bottom-content">
+                        <li className="mode">
+                            <div className="sun-moon">
+                                <i className='fas fa-moon icon moon'></i> 
+                                <i className='fas fa-sun icon sun'></i> 
+                            </div>
+                            <span className="mode-text text" onClick={toggleDarkMode}>{isDarkMode ? "Light mode" : "Dark mode"}</span>
+                            <div className="toggle-switch" onClick={toggleDarkMode}>
+                                <span className={`switch ${isDarkMode ? 'dark' : ''}`}></span>
+                            </div>
+                        </li>
+                    </div>
+                </div>
+            </nav>
+        );
+    }
+}
+
+export default Sidebar;
+
+const body = document.querySelector('body'),
+      sidebar = body.querySelector('nav'),
+      toggle = body.querySelector(".toggle"),
+      searchBtn = body.querySelector(".search-box"),
+      modeSwitch = body.querySelector(".toggle-switch"),
+      modeText = body.querySelector(".mode-text");
+
+
+toggle.addEventListener("click" , () =>{
+    sidebar.classList.toggle("close");
+})
+
+searchBtn.addEventListener("click" , () =>{
+    sidebar.classList.remove("close");
+})
+
+modeSwitch.addEventListener("click" , () =>{
+    body.classList.toggle("dark");
+    
+    if(body.classList.contains("dark")){
+        modeText.innerText = "Light mode";
+    }else{
+        modeText.innerText = "Dark mode";
+        
+    }
+});/* Google Font Import - Poppins */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+:root {
+    /* ===== Colors ===== */
+    --body-color: #E4E9F7;
+    --sidebar-color: #FFF;
+    --primary-color: #695CFE;
+    --primary-color-light: #F6F5FF;
+    --toggle-color: #DDD;
+    --text-color: #707070;
+
+    /* ====== Transition ====== */
+    --tran-02: all 0.2s ease;
+    --tran-03: all 0.3s ease;
+    --tran-04: all 0.3s ease;
+    --tran-05: all 0.3s ease;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+    overflow: hidden; /* Keep this as you wish to disable scrolling */
+    height: 100vh; /* Ensure full viewport height */
+    width: 100vw; /* Ensure full viewport width */
+}
+
+body {
+    background-color: var(--body-color);
+    transition: var(--tran-05);
+}
+
+::selection {
+    background-color: var(--primary-color);
+    color: #fff;
+}
+
+body.dark {
+    --body-color: #18191a;
+    --sidebar-color: #242526;
+    --primary-color: #3a3b3c;
+    --primary-color-light: #3a3b3c;
+    --toggle-color: #fff;
+    --text-color: #ccc;
+}
+
+/* ===== Sidebar ===== */
+ .sidebar{
+    position: fixed;
+    top: 0;
+    left: 0;
+    height: 100%;
+    width: 270px;
+    padding: 10px 14px;
+    background: var(--sidebar-color);
+    transition: var(--tran-05);
+    z-index: 100;  
+}
+.sidebar.close{
+    width: 88px;
+}
+
+/* ===== Reusable code - Here ===== */
+.sidebar li{
+    height: 50px;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin-top: 10px;
+}
+
+
+
+.sidebar header .image,
+.sidebar .icon{
+    min-width: 60px;
+    border-radius: 6px;
+}
+
+.sidebar .icon{
+    min-width: 60px;
+    border-radius: 6px;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.sidebar .text,
+.sidebar .icon{
+    color: var(--text-color);
+    transition: var(--tran-03);
+}
+
+.sidebar .text{
+    font-size: 17px;
+    font-weight: 500;
+    white-space: nowrap;
+    opacity: 1;
+}
+.sidebar.close .text{
+    opacity: 0;
+}
+/* =========================== */
+
+.sidebar header{
+    position: relative;
+}
+
+.sidebar header .image-text{
+    display: flex;
+    align-items: center;
+}
+.sidebar header .logo-text{
+    display: flex;
+    flex-direction: column;
+}
+header .image-text .name {
+    margin-top: 2px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+header .image-text .profession{
+    font-size: 16px;
+    margin-top: -2px;
+    display: block;
+}
+
+.sidebar header .image{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar header .image img{
+    width: 40px;
+    border-radius: 6px;
+}
+
+.sidebar header .toggle{
+    position: absolute;
+    top: 50%;
+    right: -25px;
+    transform: translateY(-50%) rotate(180deg);
+    height: 25px;
+    width: 25px;
+    background-color: var(--primary-color);
+    color: var(--sidebar-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    cursor: pointer;
+    transition: var(--tran-05);
+}
+
+body.dark .sidebar header .toggle{
+    color: var(--text-color);
+}
+
+.sidebar.close .toggle{
+    transform: translateY(-50%) rotate(0deg);
+}
+
+.sidebar .menu{
+    margin-top: 40px;
+}
+
+.sidebar li.search-box{
+    border-radius: 6px;
+    background-color: var(--primary-color-light);
+    cursor: pointer;
+    transition: var(--tran-05);
+}
+
+.sidebar li.search-box input{
+    height: 100%;
+    width: 100%;
+    outline: none;
+    border: none;
+    background-color: var(--primary-color-light);
+    color: var(--text-color);
+    border-radius: 6px;
+    font-size: 17px;
+    font-weight: 500;
+    transition: var(--tran-05);
+}
+.sidebar li a{
+    list-style: none;
+    height: 100%;
+    background-color: transparent;
+    display: flex;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    border-radius: 6px;
+    text-decoration: none;
+    transition: var(--tran-03);
+}
+
+.sidebar li a:hover{
+    background-color: var(--primary-color);
+}
+.sidebar li a:hover .icon,
+.sidebar li a:hover .text{
+    color: var(--sidebar-color);
+}
+body.dark .sidebar li a:hover .icon,
+body.dark .sidebar li a:hover .text{
+    color: var(--text-color);
+}
+
+.sidebar .menu-bar{
+    height: calc(100% - 55px);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    overflow-y: scroll;
+}
+.menu-bar::-webkit-scrollbar{
+    display: none;
+}
+.sidebar .menu-bar .mode{
+    border-radius: 6px;
+    background-color: var(--primary-color-light);
+    position: relative;
+    transition: var(--tran-05);
+}
+
+.menu-bar .mode .sun-moon{
+    height: 50px;
+    width: 60px;
+}
+
+.mode .sun-moon i{
+    position: absolute;
+}
+.mode .sun-moon i.sun{
+    opacity: 0;
+}
+body.dark .mode .sun-moon i.sun{
+    opacity: 1;
+}
+body.dark .mode .sun-moon i.moon{
+    opacity: 0;
+}
+
+.menu-bar .bottom-content .toggle-switch{
+    position: absolute;
+    right: 0;
+    height: 100%;
+    min-width: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    cursor: pointer;
+}
+.toggle-switch .switch{
+    position: relative;
+    height: 22px;
+    width: 40px;
+    border-radius: 25px;
+    background-color: var(--toggle-color);
+    transition: var(--tran-05);
+}
+
+.switch::before{
+    content: '';
+    position: absolute;
+    height: 15px;
+    width: 15px;
+    border-radius: 50%;
+    top: 50%;
+    left: 5px;
+    transform: translateY(-50%);
+    background-color: var(--sidebar-color);
+    transition: var(--tran-04);
+}
+
+body.dark .switch::before{
+    left: 20px;
+}
+.home {
+    position: relative; /* Adjusted to relative */
+    top: 0;
+    left: 250px; /* Adjust based on sidebar width */
+    width: calc(100% - 250px); /* Full width minus sidebar */
+    height: calc(100vh - 60px); /* Full viewport height minus header */
+    background-color: var(--body-color);
+    transition: var(--tran-05);
+    overflow-y: hidden; /* Hide overflow to prevent internal scrolling */
+    
+}
+
+.sidebar.close ~ .home {
+    left: 88px; /* Adjust based on the closed sidebar width */
+    width: calc(100% - 88px); /* Adjust width accordingly */
+}
+
+body.dark .home .text {
+    color: var(--text-color);
+}
+
+.container {
+    display: flex;
+    flex-direction: column;
+    height: 100vh; /* Ensure container takes full height of the viewport */
+    width: 100%; /* Ensure container takes full width */
+    margin-top: -3.2%; /* Reset any default margin */
+}import React, { Component } from 'react';
+import Sidebar from '../components/sidebar';
+import Header from '../components/header';
+import Request from '../supply/RequestSupply';
+
+import '../styles/style.css';
+import '@fortawesome/fontawesome-free/css/all.css';
+
+class Home extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isDarkMode: false,
+            isSidebarOpen: false,
+        };
+    }
+
+    toggleDarkMode = () => {
+        const { isDarkMode } = this.state;
+        this.setState(prevState => ({
+            isDarkMode: !prevState.isDarkMode,
+        }));
+        document.body.classList.toggle("dark", !isDarkMode);
+    }
+
+    toggleSidebar = () => {
+        this.setState(prevState => ({
+            isSidebarOpen: !prevState.isSidebarOpen,
+        }));
+    }
+
+    render() {
+        const { isDarkMode, isSidebarOpen } = this.state;
+        return (
+            <div className={`container ${isDarkMode ? "dark" : ""}`}>
+                <Header isDarkMode={isDarkMode} />
+                <Sidebar
+                    isSidebarOpen={isSidebarOpen}
+                    toggleSidebar={this.toggleSidebar}
+                    isDarkMode={isDarkMode}
+                    toggleDarkMode={this.toggleDarkMode}
+                />
+                <div className="home">
+                    <Request isDarkMode={isDarkMode} />
+                </div>
+            </div>
+        );
+    }
+}
+
+export default Home;
+import React, { useState } from 'react';
+import axios from 'axios';
+import sideImage from '../images/reqBack.png';
+import { FaUserFriends, FaHistory } from 'react-icons/fa';
+import swal from 'sweetalert';
+import { Link } from 'react-router-dom';
+
+const RequestSupply = ({ isDarkMode }) => {
+    const [formData, setFormData] = useState({
+        supplierName: '',
+        supply: '',
+        quantity: '',
+        requestDate: '',
+    });
+
+    const handleChange = (e) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
+
+    const validateForm = () => {
+        if (!formData.supplierName) {
+            swal("", "Supplier Name cannot be empty.", "error");
+            return false;
+        }
+        if (!formData.supply) {
+            swal("", "Supply cannot be empty.", "error");
+            return false;
+        }
+        if (!formData.quantity) {
+            swal("", "Quantity cannot be empty.", "error");
+            return false;
+        }
+        if (!formData.requestDate) {
+            swal("", "Request Date cannot be empty.", "error");
+            return false;
+        }
+        return true;
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (!validateForm()) {
+            return;
+        }
+        try {
+            const response = await axios.post('http://localhost:5555/supply-requests', {
+                supplierName: formData.supplierName,
+                supply: formData.supply,
+                qty: formData.quantity,
+                requestDate: formData.requestDate,
+            });
+            swal("Success!", "Your request has been successfully submitted.", "success");
+        } catch (error) {
+            console.error('Error submitting form:', error);
+            swal("Failed!", "There was a problem submitting your request.", "error");
+        }
+    };
+
+
+    const cardStyle = {
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '80%', 
+        margin: '50px',
+        marginTop: '50px',
+        backgroundColor: isDarkMode ? '#333' : '#fff',
+        boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+        borderRadius: '10px',
+        padding: '20px',
+        fontFamily: 'sans-serif',
+        position: 'relative',
+    };
+
+    const formSectionStyle = {
+        width: '50%',
+        paddingRight: '20px', 
+    };
+
+    const inputStyle = {
+        width: '100%',
+        padding: '10px 0',
+        margin: '10px 20px',
+        border: 'none',
+        borderBottom: `2px solid ${isDarkMode ? '#555' : '#ccc'}`,
+        backgroundColor: 'transparent',
+        color: isDarkMode ? '#ddd' : '#333',
+        fontSize: '16px',
+        outline: 'none',
+    };
+
+    const labelStyle = {
+        fontWeight: 'lighter',
+        marginBottom: '5px',
+        color: isDarkMode ? '#ddd' : '#333',
+    };
+
+    const buttonStyle = {
+        width: '100%',
+        padding: '15px',
+        marginTop: '20px',
+        borderRadius: '5px',
+        border: 'none',
+        backgroundColor: '#007BFF',
+        color: '#fff',
+        cursor: 'pointer',
+        fontSize: '16px',
+        margin: '10px 20px',
+    };
+
+    const buttontwo = {
+        width: '85%',
+        padding: '15px',
+        marginTop: '10px',
+        borderRadius: '5px',
+        border: 'none',
+        backgroundColor: '#009688',
+        color: '#fff',
+        cursor: 'pointer',
+        fontSize: '16px',
+        margin: '10px 20px',
+    };
+
+    const imageStyle = {
+        width: '50%',
+        height: 'auto',
+    };
+
+    const iconStyle = {
+        marginRight: '10px',
+    };
+
+    const buttonContainerStyle = {
+        position: 'absolute',
+        top: '28%',
+        right: '50px',
+        transform: 'translateY(-50%)',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'flex-end',
+    };
+
+    return (
+        <div>
+            <div style={cardStyle}>
+                <form onSubmit={handleSubmit} style={formSectionStyle}>
+                    <h2 style={{ color: isDarkMode ? '#fff' : '#000' }}>Request Supply</h2>
+
+                    <label htmlFor="supplierName" style={labelStyle}>Supplier Name</label>
+                    <input
+                        type="text"
+                        id="supplierName"
+                        name="supplierName"
+                        placeholder="Supplier Name"
+                        style={inputStyle}
+                        value={formData.supplierName}
+                        onChange={handleChange}
+                    />
+
+                    <label htmlFor="supply" style={labelStyle}>Supply</label>
+                    <input
+                        type="text"
+                        id="supply"
+                        name="supply"
+                        placeholder="Supply"
+                        style={inputStyle}
+                        value={formData.supply}
+                        onChange={handleChange}
+                    />
+
+                    <label htmlFor="quantity" style={labelStyle}>Quantity</label>
+                    <input
+                        type="number"
+                        id="quantity"
+                        name="quantity"
+                        placeholder="Quantity"
+                        style={inputStyle}
+                        value={formData.quantity}
+                        onChange={handleChange}
+                    />
+
+                    <label htmlFor="requestDate" style={labelStyle}>Request Date</label>
+                    <input
+                        type="date"
+                        id="requestDate"
+                        name="requestDate"
+                        style={inputStyle}
+                        value={formData.requestDate}
+                        onChange={handleChange}
+                    />
+
+                    <button type="submit" style={buttonStyle}>Submit Request</button>
+                </form>
+
+                <div style={imageStyle}>
+                    <img src={sideImage} alt="Profile" style={{ width: '120%', height: 'auto' }} />
+                </div>
+            </div>
+
+            <div style={buttonContainerStyle}>
+            <Link to="/manage-suppliers" style={buttontwo}>
+                <FaUserFriends style={iconStyle} />
+                Manage Suppliers
+                </Link>
+                <Link to="/request-history" style={buttontwo}>
+                    <FaHistory style={iconStyle} />
+                    Request History
+                    </Link>
+            </div>
+        </div>
+    );
+};
+
+export default RequestSupply;
+read this very hard and get understand about theme and colours and everything about project.then    design his page according to theme colours.import React, { Component } from 'react';
+import Sidebar from '../components/sidebar';
+import Header from '../components/header';
+import Request from '../supply/RequestSupply';
+
+import '../styles/style.css';
+import '@fortawesome/fontawesome-free/css/all.css';
+
+class ManageSupply extends Component {
+    constructor(props) {
+        super(props);
+        this.state = {
+            isDarkMode: false,
+            isSidebarOpen: false,
+        };
+    }
+
+    toggleDarkMode = () => {
+        const { isDarkMode } = this.state;
+        this.setState(prevState => ({
+            isDarkMode: !prevState.isDarkMode,
+        }));
+        document.body.classList.toggle("dark", !isDarkMode);
+    }
+
+    toggleSidebar = () => {
+        this.setState(prevState => ({
+            isSidebarOpen: !prevState.isSidebarOpen,
+        }));
+    }
+
+    render() {
+        const { isDarkMode, isSidebarOpen } = this.state;
+        return (
+            <div className={`container ${isDarkMode ? "dark" : ""}`}>
+                <Header isDarkMode={isDarkMode} />
+                <Sidebar
+                    isSidebarOpen={isSidebarOpen}
+                    toggleSidebar={this.toggleSidebar}
+                    isDarkMode={isDarkMode}
+                    toggleDarkMode={this.toggleDarkMode}
+                />
+                <div className="home">
+                    
+                </div>
+            </div>
+        );
+    }
+}
+
+export default ManageSupply;
+in this page there is a nice clean embeded table. it include
+companyName: 
+    contactNumber:
+    address:
+    email:
+    productType:
+    and action (add icon for update
+     an delete icon)
