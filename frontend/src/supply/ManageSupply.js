@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import { FaEdit, FaTrash, FaPlus } from 'react-icons/fa';
 import swal from 'sweetalert';
-
 import Header from '../components/header';
 import Sidebar from '../components/sidebar';
 import '../styles/style.css';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'; 
 
 class ManageSupply extends Component {
     constructor(props) {
@@ -30,7 +31,9 @@ class ManageSupply extends Component {
                 address: '',
                 email: '',
                 productType: ''
-            }
+            },
+            searchQuery: '', 
+            filteredSuppliers: [],
         };
     }
 
@@ -41,7 +44,7 @@ class ManageSupply extends Component {
     fetchSuppliers = async () => {
         try {
             const response = await axios.get('http://localhost:5555/suppliers');
-            this.setState({ suppliers: response.data.data });
+            this.setState({ suppliers: response.data.data, filteredSuppliers: response.data.data });
         } catch (error) {
             console.error("Couldn't fetch suppliers", error);
         }
@@ -106,6 +109,67 @@ class ManageSupply extends Component {
             swal("Failed!", "There was a problem deleting your supplier.", "error");
         }
     };
+
+    handlePDFGeneration = async () => {
+        try {
+            const response = await axios.get('http://localhost:5555/suppliers');
+            const suppliers = response.data.data;
+    
+            if (suppliers.length > 0) {
+                const pdf = new jsPDF();
+                
+                pdf.setFontSize(24);
+                pdf.setTextColor(44, 62, 80);
+                pdf.text('Supplier List', 105, 20, null, null, 'center');
+    
+                const tableHeaders = ['Company Name', 'Contact Number', 'Address', 'Email', 'Product Type'];
+    
+
+                const tableData = suppliers.map(supplier => [
+                    supplier.companyName,
+                    supplier.contactNumber,
+                    supplier.address,
+                    supplier.email,
+                    supplier.productType
+                ]);
+    
+                // Set up table styling
+                const tableStyle = {
+                    margin: { top: 40 },
+                    headStyles: { fillColor: [44, 62, 80], textColor: 255, fontSize: 12 },
+                    bodyStyles: { textColor: 44, fontSize: 10 },
+                    alternateRowStyles: { fillColor: 245 },
+                    startY: 30
+                };
+    
+                // Add table to PDF
+                pdf.autoTable(tableHeaders, tableData, tableStyle);
+    
+                // Save the PDF with title and download it
+                pdf.save('Suppliers_List.pdf');
+            } else {
+                console.error('No suppliers found.');
+                swal("No Suppliers", "There are no suppliers to generate a PDF.", "info");
+            }
+        } catch (error) {
+            console.error("Couldn't fetch suppliers", error);
+            swal("Error", "There was a problem fetching suppliers.", "error");
+        }
+    };
+
+    handleSearch = (e) => {
+        const { value } = e.target;
+        const { suppliers } = this.state; // Corrected typo here
+        
+        // Filter suppliers based on company name or product type
+        const filteredSuppliers = suppliers.filter(supplier =>
+            supplier.companyName.toLowerCase().includes(value.toLowerCase()) ||
+            supplier.productType.toLowerCase().includes(value.toLowerCase())
+        );
+    
+        this.setState({ searchQuery: value, filteredSuppliers }); // Updated state key to 'filteredSuppliers'
+    };
+
 
     validateForm = () => {
         const { newSupplier } = this.state;
@@ -183,15 +247,18 @@ class ManageSupply extends Component {
         }));
     }
 
+   
+
+
     render() {
         const { isDarkMode, isSidebarOpen, suppliers, newSupplier, isAddModalOpen, isEditModalOpen, validationMessages } = this.state;
-
+        
         const modalStyle = { position: 'fixed', top: 0, left: 0, width: '100%', height: '100%', backgroundColor: 'rgba(0, 0, 0, 0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center' };
         const modalContentStyle = { backgroundColor: isDarkMode ? '#333' : 'white', color: isDarkMode ? 'white' : 'black', padding: '20px', borderRadius: '8px', boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)', width: '400px' };
         const cardStyleAdjustment = {
             transition: 'all 0.3s',
-            marginLeft: isSidebarOpen ? '90px' : '80px', // Adjust based on your sidebar width
-            width: isSidebarOpen ? 'calc(100% - 150px)' : '85%' // Adjust based on your sidebar width
+            marginLeft: isSidebarOpen ? '90px' : '80px',
+            width: isSidebarOpen ? 'calc(100% - 150px)' : '85%' 
         };
 
         const commonStyles = {
@@ -200,7 +267,7 @@ class ManageSupply extends Component {
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 margin: '20px',
-                marginTop: '70px',
+                marginTop: '1%',
                 backgroundColor: isDarkMode ? '#333' : '#fff',
                 boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
                 borderRadius: '10px',
@@ -210,11 +277,11 @@ class ManageSupply extends Component {
                 ...cardStyleAdjustment,
                 transition: 'all 0.3s',
                 marginLeft: 'var(--sidebar-width, 80px)',
-                width: 'calc(100% - var(--sidebar-width, 80px) - 20px)', /* Adjust based on sidebar, 20px for some padding */
+                width: 'calc(100% - var(--sidebar-width, 80px) - 20px)', 
             },
 
             tableStyle: {
-                width: '97%', borderCollapse: 'collapse', marginTop: '20px',
+                width: '97%', borderCollapse: 'collapse', marginTop: '2px',
 
             },
             thStyle: {
@@ -233,16 +300,57 @@ class ManageSupply extends Component {
                 width: '100%', padding: '10px', marginTop: '10px', borderRadius: '5px', border: '1px solid #ccc', fontSize: '16px', backgroundColor: isDarkMode ? '#444' : '#fff', color: isDarkMode ? '#ddd' : '#333',
             },
             buttonStyle: {
-                width: '80%', padding: '10px', marginRight: '10px', marginTop: '10px', borderRadius: '5px', border: 'none', backgroundColor: isDarkMode ? '#009688' : '#009688', color: '#fff', cursor: 'pointer', fontSize: '16px', textDecoration: 'none'
+                width: '80%',
+                 padding: '2%',
+                  marginRight: '10px',
+                   marginTop: '10px',
+                    borderRadius: '5px',
+                     border: 'none',
+                      backgroundColor: '#009688',
+                       color: '#fff', cursor: 'pointer', fontSize: '16px', textDecoration: 'none'
+            },
+            buttonStyle4: {
+                width: '80%',
+                 padding: '2%',
+                  marginRight: '10px',
+                   marginTop: '10px',
+                    borderRadius: '5px',
+                     border: 'none',
+                      backgroundColor: '#285955',
+                       color: '#fff', cursor: 'pointer', fontSize: '16px', textDecoration: 'none'
             },
             validationMessageStyle: {
                 color: '#ff3860', fontSize: '0.8rem', marginTop: '0.25rem',
             },
+            buttonStyle2: {
+                padding: '8px 10px',
+                borderRadius: '5px',
+                fontSize: '14px',
+                border: 'none',
+                color: '#fff',
+                cursor: 'pointer',
+                marginTop: '20px',
+                width: '10%',
+                marginLeft: '85%'
+            },
+            buttonStyle3: {
+                padding: '8px 10px',
+                borderRadius: '5px',
+                fontSize: '14px',
+                border: 'none',
+                color: '#fff',
+                cursor: 'pointer',
+                marginTop: '10px',
+                marginBottom: '1%',
+                width: '10%',
+                marginLeft: '85%'
+            }
         };
-
+        
 
         return (
-            <div className={`container ${isDarkMode ? "dark" : ""}`}>
+            
+            <div className={`container ${isDarkMode ? "dark" : ""}`}  style={{ marginTop: '4%' }}>
                 <Header isDarkMode={isDarkMode} />
                 <Sidebar
                     isSidebarOpen={isSidebarOpen}
@@ -250,10 +358,28 @@ class ManageSupply extends Component {
                     isDarkMode={isDarkMode}
                     toggleDarkMode={this.toggleDarkMode}
                 />
+                        <button onClick={this.handlePDFGeneration} style={{ ...commonStyles.buttonStyle2, background: '#009688' }}>
+                            Generate PDF
+                        </button>
 
+                     
+                        <button onClick={this.toggleAddModal}  style={{ ...commonStyles.buttonStyle3, background: '#009688'}}>
+                            <FaPlus style={{ marginRight: '8px' }} />
+                            Add Suppliers
+                        </button>
+                      
+                
                 <div className="home">
                     <div style={commonStyles.cardStyle}>
-                        <table style={commonStyles.tableStyle}>
+                    <input
+                            type="text"
+                            placeholder="Search by Company Name or Product Type"
+                            style={{ ...commonStyles.inputStyle, marginBottom: '10px' }}
+                            value={this.state.searchQuery}
+                            onChange={this.handleSearch}
+                        />
+                        
+                        <table id="suppliers-table" style={commonStyles.tableStyle}>
                             <thead>
                                 <tr>
                                     <th style={commonStyles.thStyle}>Company Name</th>
@@ -264,8 +390,9 @@ class ManageSupply extends Component {
                                     <th style={commonStyles.thStyle}>Action</th>
                                 </tr>
                             </thead>
+                            
                             <tbody>
-                                {suppliers.map(supplier => (
+                                {this.state.filteredSuppliers.map(supplier => (
                                     <tr key={supplier._id}>
                                         <td style={commonStyles.tdStyle}>{supplier.companyName}</td>
                                         <td style={commonStyles.tdStyle}>{supplier.contactNumber}</td>
@@ -280,15 +407,10 @@ class ManageSupply extends Component {
                                         </td>
                                     </tr>
                                 ))}
-                            </tbody>
+                            </tbody>    
                         </table>
                     </div>
-                    <div style={commonStyles.buttonContainerStyle}>
-                        <button onClick={this.toggleAddModal} style={commonStyles.buttonStyle}>
-                            <FaPlus style={{ marginRight: '8px' }} />
-                            Add Suppliers
-                        </button>
-                    </div>
+                    
                     {isAddModalOpen && (
                         <div style={modalStyle}>
                             <div style={modalContentStyle}>
@@ -306,7 +428,7 @@ class ManageSupply extends Component {
                                 {validationMessages.productType && <div style={commonStyles.validationMessageStyle}>{validationMessages.productType}</div>}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
                                     <button onClick={this.addSupplier} style={commonStyles.buttonStyle}>Add Supplier</button>
-                                    <button onClick={this.toggleAddModal} style={commonStyles.buttonStyle}>Cancel</button>
+                                    <button onClick={this.toggleAddModal} style={commonStyles.buttonStyle4}>Cancel</button>
                                 </div>
                             </div>
                         </div>
@@ -328,7 +450,7 @@ class ManageSupply extends Component {
                                 {validationMessages.productType && <div style={commonStyles.validationMessageStyle}>{validationMessages.productType}</div>}
                                 <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '20px' }}>
                                     <button onClick={this.updateSupplier} style={commonStyles.buttonStyle}>Update Supplier</button>
-                                    <button onClick={() => this.toggleEditModal()} style={commonStyles.buttonStyle}>Cancel</button>
+                                    <button onClick={() => this.toggleEditModal()} style={commonStyles.buttonStyle4}>Cancel</button>
                                 </div>
                             </div>
                         </div>

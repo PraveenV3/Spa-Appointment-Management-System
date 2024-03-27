@@ -1,25 +1,33 @@
 import React, { Component } from 'react';
 import logoImage from '../images/p.jpg';
+import arrow from '../images/arrow.png';
 
 class Sidebar extends Component {
     render() {
         const { isSidebarOpen, toggleSidebar, isDarkMode, toggleDarkMode,
          } = this.props;
+
+         const toggleIconStyle = {
+            cursor: 'pointer',
+            width: '50px', 
+            height: '70%', 
+            marginTop: '15px',
+            
+        };
         return (
             <nav className={`sidebar ${isSidebarOpen ? "" : "close"}`}>
-                <header>
-                    <div className="image-text">
-                        <span className="image">
-                        <img src={logoImage} alt="Profile" style={{ marginLeft: '-25%' }} />
-                           
+                <header style={{ marginTop:'2%' }}>
+                    <img src={logoImage} alt="Profile" style={{ marginLeft: '3%', width: '50px' , marginRight: '99%'}} /> 
+                                <div className="image-text">
+                                    <span className="image">
+                                    <img src={arrow} alt="Toggle Sidebar" style={toggleIconStyle} onClick={toggleSidebar} />
                         </span>
-                        <div className="text logo-text">
-                            <span className="name" style={{ marginLeft: '-10%' }}>P&D Auto Engineers</span>
-                            <span className="profession" style={{ marginLeft: '-44%' }}>Private Limited</span>
+                        <div className="text logo-text">  
                         </div>
                     </div>
-                    <i className='fas fa-arrow-right toggle' style={{ fontSize: '90%' }} onClick={toggleSidebar}></i> 
+                  
                 </header>
+                
                 <div className="menu-bar">
                     <div className="menu">
                         <ul className="menu-links">
@@ -95,4 +103,9 @@ class Sidebar extends Component {
 }
 
 export default Sidebar;
+
+
+
+
+
 

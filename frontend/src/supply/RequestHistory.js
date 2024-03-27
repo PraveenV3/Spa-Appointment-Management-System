@@ -4,6 +4,8 @@ import { FaEdit, FaTrashAlt } from 'react-icons/fa';
 import swal from 'sweetalert';
 import Header from '../components/header';
 import Sidebar from '../components/sidebar';
+import jsPDF from 'jspdf';
+import 'jspdf-autotable'; 
 
 class RequestHistory extends Component {
     state = {
@@ -19,6 +21,8 @@ class RequestHistory extends Component {
             qty: ''
         },
         companyNames: [],
+        searchQuery: '', 
+        filteredSupply: [],
     };
 
     componentDidMount() {
@@ -39,11 +43,24 @@ class RequestHistory extends Component {
     fetchRequests = async () => {
         try {
             const response = await axios.get('http://localhost:5555/supply-requests');
-            this.setState({ requests: response.data.data });
+            this.setState({ requests: response.data.data, filteredSupply: response.data.data });
         } catch (error) {
             console.error("Couldn't fetch requests", error);
             this.setFlashMessage('Failed to fetch requests', 'error');
         }
+    };
+
+    handleSearch = (e) => {
+        const { value } = e.target;
+        const { requests } = this.state; 
+        
+        const filteredSupply = requests.filter(request =>
+            request.supplierName.toLowerCase().includes(value.toLowerCase()) ||
+             request.status.toLowerCase().includes(value.toLowerCase()) ||
+             request.status.toLowerCase().includes(value.toLowerCase())
+        );
+        
+        this.setState({ searchQuery: value, filteredSupply });
     };
 
     toggleDarkMode = () => {
@@ -119,6 +136,8 @@ class RequestHistory extends Component {
         }, () => this.validateField(key, e.target.value));
     };
 
+
+
     validateField = (fieldName, value) => {
         let message = '';
 
@@ -143,6 +162,33 @@ class RequestHistory extends Component {
         return message === '';
     };
 
+
+
+    handlePDFGeneration = () => {
+        const { requests } = this.state;
+        if (requests.length > 0) {
+            const pdf = new jsPDF();
+            pdf.setFontSize(18);
+            pdf.setTextColor(40);
+            pdf.text('Request History', 105, 15, null, null, 'center');
+    
+            const tableColumn = ['Company Name', 'Supply', 'Quantity', 'Request Date', 'Status'];
+            const tableRows = requests.map(request => [
+                request.supplierName,
+                request.supply,
+                request.qty.toString(),
+                request.requestDate,
+                request.status
+            ]);
+    
+            pdf.autoTable(tableColumn, tableRows, { startY: 20 });
+            pdf.save('request_history.pdf');
+        } else {
+            swal("No Requests", "There are no requests to generate a PDF.", "info");
+        }
+    };
+
+
     validateForm = () => {
         const { supply, qty } = this.state.editedRequest;
         const fields = ['supply', 'qty'];
@@ -150,7 +196,6 @@ class RequestHistory extends Component {
 
         return validations.every(validation => validation);
     };
-
     setFlashMessage = (message, type) => {
         this.setState({
             flashMessage: message,
@@ -161,7 +206,6 @@ class RequestHistory extends Component {
             }, 3000);
         });
     };
-
     getStatusColor = (status) => {
         switch (status) {
             case 'pending':
@@ -174,7 +218,6 @@ class RequestHistory extends Component {
                 return 'inherit';
         }
     };
-
     render() {
         const { isDarkMode, isSidebarOpen, requests, isModalOpen, editedRequest, flashMessage, flashMessageType, validationMessages, companyNames } = this.state;
 
@@ -199,9 +242,8 @@ class RequestHistory extends Component {
             boxShadow: '0 0 10px rgba(0, 0, 0, 0.3)',
             width: '400px',
         };
-
         return (
-            <div className={`container ${isDarkMode ? 'dark' : ''}`} style={{ background: isDarkMode ? '#252525' : '#fff', color: isDarkMode ? '#fff' : '#333' }}>
+            <div className={`container ${isDarkMode ? "dark" : ""}`}>
                 <Header isDarkMode={isDarkMode} />
                 <Sidebar
                     isSidebarOpen={isSidebarOpen}
@@ -214,8 +256,18 @@ class RequestHistory extends Component {
                         {flashMessage}
                     </div>
                 )}
+                    <button onClick={this.handlePDFGeneration} style={{ ...commonStyles.buttonStyle2, background: '#009688' }}>
+                        Generate PDF
+                    </button>
                 <div className="request-history-container" style={{ marginLeft: isSidebarOpen ? '260px' : '90px', transition: 'margin-left 0.3s' }}>
-                    <div style={{ margin: '20px', marginTop: '70px', padding: '20px', background: isDarkMode ? '#252525' : '#fff', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '10px' }}>
+                    <div style={{ margin: '20px', marginTop: '1%', padding: '20px', background: isDarkMode ? '#252525' : '#fff', boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)', borderRadius: '10px',backgroundColor:'#FAFAFA' }}>
+                    <input
+                            type="text"
+                            placeholder="Search by Company Name"
+                            style={{ ...commonStyles.inputStyle, marginBottom: '10px' }}
+                            value={this.state.searchQuery}
+                            onChange={this.handleSearch}
+                        />
                         <table style={{ width: '100%', borderCollapse: 'collapse', marginTop: '20px' }}>
                             <thead>
                                 <tr>
@@ -228,7 +280,7 @@ class RequestHistory extends Component {
                                 </tr>
                             </thead>
                             <tbody>
-                                {requests.map(request => (
+                                {this.state.filteredSupply.map(request => (
                                     <tr key={request._id}>
                                         <td style={{ padding: '12px 15px', borderBottom: '1px solid #ddd', color: isDarkMode ? '#fff' : '#333', textAlign: 'left' }}>{request.supplierName}</td>
                                         <td style={{ padding: '12px 15px', borderBottom: '1px solid #ddd', color: isDarkMode ? '#fff' : '#333', textAlign: 'left' }}>{request.supply}</td>
@@ -302,7 +354,7 @@ class RequestHistory extends Component {
                             />
                             {validationMessages.qty && <div style={{ color: 'red', fontSize: '0.8rem', marginTop: '5px' }}>{validationMessages.qty}</div>}
                             <button type="submit" style={{ ...commonStyles.buttonStyle, background: '#009688', margin: '10px 0' }}>Update</button>
-                            <button type="button" onClick={this.closeModal} style={{ ...commonStyles.buttonStyle, background: '#009688', margin: '15px 10px' }}>Cancel</button>
+                            <button type="button" onClick={this.closeModal} style={{ ...commonStyles.buttonStyle3, background: '#285955', margin: '15px 10px' }}>Cancel</button>
                         </form>
                     </div>
                 </div>
@@ -310,7 +362,6 @@ class RequestHistory extends Component {
         );
     }
 }
-
 const commonStyles = {
     inputStyle: {
         width: '100%',
@@ -327,7 +378,30 @@ const commonStyles = {
         border: 'none',
         color: '#fff',
         cursor: 'pointer',
-    }
+    },
+
+    buttonStyle2: {
+        padding: '8px 10px',
+        borderRadius: '5px',
+        fontSize: '14px',
+        border: 'none',
+        color: '#fff',
+        cursor: 'pointer',
+        marginTop: '5%',
+        width: '10%',
+        marginLeft: '85%'
+    },
+
+    buttonStyle3: {
+        padding: '12px 55px',
+        borderRadius: '5px',
+        fontSize: '16px',
+        border: 'none',
+        color: '#fff',
+        backgroundColor:'#285955',
+        cursor: 'pointer',
+    },
+    
 };
 
 export default RequestHistory;

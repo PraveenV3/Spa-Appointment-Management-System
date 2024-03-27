@@ -33,14 +33,16 @@ class Home extends Component {
         const { isDarkMode, isSidebarOpen } = this.state;
         return (
             <div className={`container ${isDarkMode ? "dark" : ""}`}>
-                <Header isDarkMode={isDarkMode} />
+                
                 <Sidebar
                     isSidebarOpen={isSidebarOpen}
                     toggleSidebar={this.toggleSidebar}
                     isDarkMode={isDarkMode}
                     toggleDarkMode={this.toggleDarkMode}
+                    
                 />
-                <div className="home">
+                <Header isDarkMode={isDarkMode} />
+                <div className="home" style={{ marginTop: '3%' }}>
                     <Request isDarkMode={isDarkMode} />
                 </div>
             </div>
