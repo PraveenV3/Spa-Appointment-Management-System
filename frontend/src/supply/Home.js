@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Sidebar from '../components/sidebar';
 import Header from '../components/header';
-import Request from '../supply/RequestSupply';
+import Employee from './EmployeeLists';
 
 import '../styles/style.css';
 import '@fortawesome/fontawesome-free/css/all.css';
@@ -43,7 +43,7 @@ class Home extends Component {
                 />
                 <Header isDarkMode={isDarkMode} />
                 <div className="home" style={{ marginTop: '3%' }}>
-                    <Request isDarkMode={isDarkMode} />
+                     <Employee isDarkMode={isDarkMode} /> 
                 </div>
             </div>
         );

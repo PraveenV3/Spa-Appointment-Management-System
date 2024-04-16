@@ -1,12 +1,16 @@
 import mongoose from 'mongoose';
 
-const supplierSchema = mongoose.Schema(
+const employeeSchema = new mongoose.Schema(
   {
-    companyName: {
+    employeeName: {
       type: String,
       required: true,
     },
     contactNumber: {
+      type: String,
+      required: true,
+    },
+    NIC: {
       type: String,
       required: true,
     },
@@ -18,7 +22,16 @@ const supplierSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    productType: {
+    jobCategory: {
+      type: String,
+      required: true,
+    },
+    
+    basicSalary: {
+      type: Number,
+      required: true,
+    },
+    otRate: {
       type: String,
       required: true,
     },
@@ -29,4 +42,4 @@ const supplierSchema = mongoose.Schema(
 );
 
 
-export const Supplier = mongoose.model('Supplier', supplierSchema);
+export const Employee = mongoose.model('Employee', employeeSchema);
